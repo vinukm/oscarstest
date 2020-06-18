@@ -29,14 +29,12 @@ Please cover with the Unit tests the requirements mentioned in the Javadoc, also
 Each of the test entry contains property named 'numberOfReferences'. Let's assume that this value is being updated each hour.
 The project structure has been created using the archetypeVersion 23 proposed by Adobe. Non necessary modules has been removed (all, ui.apps, ui.apps.structure, ui.content, it.tests, it.launcher)
 
-
 `We appreciate TDD and single responsibility principle.`
 
 
 ##Additional questions:
 1. The test data contains a big amount of test data. If you would have an ability to put this to the repository, how would you structure it?
 2. How can you improve the performance of the functionality that you're going to implement?
-
 
 
 ##Copied over requirements from the Servlet:
@@ -60,7 +58,9 @@ Please note:
 More then 1 filter must be supported.
 The resulting JSON must not contain "jcr:primaryType" and "sling:resourceType" properties
 
+
 ##Below you can find some examples based on the data stored in oscars.json in resources directory:
+
 
 ###Request parameters: year=2019&minAwards=4
 
@@ -80,7 +80,9 @@ Sample response:
 }
 ```
 
+
 ###Request parameters: minYear=2018&minAwards=3&sortBy=nominations&limit=4
+
 
 Sample response:
 ```
