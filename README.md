@@ -17,27 +17,27 @@ To run the test you can use the following command:
 
 As an output in the Terminal you should see all the entries from the test data 
 
-##Test data:
+## Test data:
 The test data provided in the JSON file `oscars.json` is required for your Unit tests. Please use this data to fill in your repository with the data to work with. 
 We already prepared a sample test where you can check how you can load the test data to the in-memory repository: `de.cyberport.core.servlets.OscarFilmContainerServletTest`
 
 
-##Side information:
+## Side information:
 Feel free to implement any additional Services/Components/Helpers/Utils/Test classes/etc to fulfil the requirements mentioned in the Javadoc. 
 Feel free to add any additional dependencies to the project, for instance for JSON mapping.
 Please cover with the Unit tests the requirements mentioned in the Javadoc, also do not forget about the edge cases.
 Each of the test entry contains property named 'numberOfReferences'. Let's assume that this value is being updated each hour.
 The project structure has been created using the archetypeVersion 23 proposed by Adobe. Non necessary modules has been removed (all, ui.apps, ui.apps.structure, ui.content, it.tests, it.launcher)
 
-`We appreciate TDD and single responsibility principle.`
+**We appreciate TDD and single responsibility principle.**
 
 
-##Additional questions:
+## Additional questions:
 1. The test data contains a big amount of test data. If you would have an ability to put this to the repository, how would you structure it?
 2. How can you improve the performance of the functionality that you're going to implement?
 
 
-##Copied over requirements from the Servlet:
+## Copied over requirements from the Servlet:
 
 Based on the request parameters, a filtering and sorting should be applied.
 
@@ -59,10 +59,10 @@ More then 1 filter must be supported.
 The resulting JSON must not contain "jcr:primaryType" and "sling:resourceType" properties
 
 
-##Below you can find some examples based on the data stored in oscars.json in resources directory:
+##B elow you can find some examples based on the data stored in oscars.json in resources directory:
 
 
-###Request parameters: year=2019&minAwards=4
+### Request parameters: year=2019&minAwards=4
 
 Sample response:
 ```
@@ -81,7 +81,7 @@ Sample response:
 ```
 
 
-###Request parameters: minYear=2018&minAwards=3&sortBy=nominations&limit=4
+### Request parameters: minYear=2018&minAwards=3&sortBy=nominations&limit=4
 
 
 Sample response:
