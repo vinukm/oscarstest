@@ -59,7 +59,7 @@ More then 1 filter must be supported.
 The resulting JSON must not contain "jcr:primaryType" and "sling:resourceType" properties
 
 
-##B elow you can find some examples based on the data stored in oscars.json in resources directory:
+## Below you can find some examples based on the data stored in oscars.json in resources directory:
 
 
 ### Request parameters: year=2019&minAwards=4
