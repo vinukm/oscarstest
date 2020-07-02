@@ -40,7 +40,7 @@ The project structure has been created using the archetypeVersion 23 proposed by
 
 ## Copied over requirements from the Servlet:
 
-Based on the request parameters, a filtering and sorting should be applied.
+Based on the request parameters, a filtering and sorting should be applied. Default sort order is by title.
 
 For cases when there is no supported request parameter provided in the request, the servlet should return all the films below the requested container.
 
@@ -53,18 +53,19 @@ The Servlet must support following request parameters:
 6. maxAwards - Integer. The maximum value for number of awards
 7. nominations - Integer. The exact number of nominations
 8. isBestPicture - Boolean. True to return only the winners of the best picture nomination.
-9. sortBy - Enumeration. Sorting in ascending order, supported values are: title, year, awards, nominations.
+9. sortBy - Enumeration. Sorting in ascending order, supported values are: title, year, awards, nominations. Default value should be title.
 10. limit - Integer. Maximum amount of result entries in the response.
 
 Please note:
 More then 1 filter must be supported.
 The resulting JSON must not contain "jcr:primaryType" and "sling:resourceType" properties
+When there will be no results based on the provided filter an empty array should be returned. Please refer to the 3rd example.
 
 
 ## Below you can find some examples based on the data stored in oscars.json in resources directory:
 
 
-### Request parameters: year=2019&minAwards=4
+### 1. Request parameters: year=2019&minAwards=4
 
 Sample response:
 ```
@@ -83,8 +84,7 @@ Sample response:
 ```
 
 
-### Request parameters: minYear=2018&minAwards=3&sortBy=nominations&limit=4
-
+### 2. Request parameters: minYear=2018&minAwards=3&sortBy=nominations&limit=4
 
 Sample response:
 ```
@@ -123,5 +123,15 @@ Sample response:
       "numberOfReferences": 770
     }
   ]
+}
+```
+
+
+### 3. Request parameters: title=nonExisting
+
+Sample response:
+```
+{
+  "result": []
 }
 ```

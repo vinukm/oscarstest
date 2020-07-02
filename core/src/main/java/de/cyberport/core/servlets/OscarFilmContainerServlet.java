@@ -34,6 +34,7 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
  * Please note:
  * More then 1 filter must be supported.
  * The resulting JSON must not contain "jcr:primaryType" and "sling:resourceType" properties
+ * When there will be no results based on the provided filter an empty array should be returned. Please refer to the 3rd example.
  *
  * Examples based on the data stored in oscars.json in resources directory.
  *
@@ -93,6 +94,12 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
  *   ]
  * }
  *
+ * 3. Request parameters: title=nonExisting
+ *
+ * Sample response:
+ * {
+ *   "result": []
+ * }
  * @author Vitalii Afonin
  */
 @Component(service = { Servlet.class }, immediate = true)
