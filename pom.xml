@@ -208,6 +208,14 @@ Bundle-DocURL:
                     <version>2.22.1</version>
                     <configuration>
                         <useSystemClassLoader>false</useSystemClassLoader>
+                        <properties>
+                            <configurationParameters>
+                                junit.jupiter.execution.parallel.enabled = true
+                                junit.jupiter.execution.parallel.mode.default = concurrent
+                                junit.jupiter.execution.parallel.mode.classes.default = concurrent
+                                junit.jupiter.execution.parallel.config.fixed.parallelism=4
+                            </configurationParameters>
+                        </properties>
                     </configuration>
                 </plugin>
                 <!-- Maven Failsafe Plugin -->
@@ -392,6 +400,16 @@ Bundle-DocURL:
                     <snapshots>
                         <enabled>false</enabled>
                     </snapshots>
+                </repository>
+                <repository>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <id>central</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
                 </repository>
             </repositories>
 
@@ -724,6 +742,17 @@ Bundle-DocURL:
                 <artifactId>hamcrest</artifactId>
                 <version>2.1</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.6</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -2,6 +2,7 @@
 
 ## Goal:
 Your goal will be to provide a search functionality with filtering and sorting based on the test data that is included into the project. 
+**Please write JUnit tests to verify your implementation**
 The name of the file with the test data is oscars.json (located in the resources folder).
 
 
@@ -53,6 +54,7 @@ The Servlet must support following request parameters:
 7. nominations - Integer. The exact number of nominations
 8. isBestPicture - Boolean. True to return only the winners of the best picture nomination.
 9. sortBy - Enumeration. Sorting in ascending order, supported values are: title, year, awards, nominations.
+10. limit - Integer. Maximum amount of result entries in the response.
 
 Please note:
 More then 1 filter must be supported.

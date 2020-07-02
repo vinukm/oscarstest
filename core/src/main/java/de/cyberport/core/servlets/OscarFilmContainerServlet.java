@@ -29,6 +29,7 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
  * 7. nominations - Integer. The exact number of nominations
  * 8. isBestPicture - Boolean. True to return only the winners of the best picture nomination.
  * 9. sortBy - Enumeration. Sorting in ascending order, supported values are: title, year, awards, nominations.
+ * 10. limit - Integer. Maximum amount of result entries in the response.
  *
  * Please note:
  * More then 1 filter must be supported.
