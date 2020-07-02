@@ -14,7 +14,7 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
  * Servlet that writes information about the Oscar films in json format into the response.
  * It is mounted for all resources of a specific Sling resource type.
  *
- * Based on the request parameters, a filtering and sorting should be applied.
+ * Based on the request parameters, a filtering and sorting should be applied. Default sort order is by title.
  *
  * For cases when there is no supported request parameter provided in the request,
  * the servlet should return all the films below the requested container.
@@ -28,7 +28,7 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
  * 6. maxAwards - Integer. The maximum value for number of awards
  * 7. nominations - Integer. The exact number of nominations
  * 8. isBestPicture - Boolean. True to return only the winners of the best picture nomination.
- * 9. sortBy - Enumeration. Sorting in ascending order, supported values are: title, year, awards, nominations.
+ * 9. sortBy - Enumeration. Sorting in ascending order, supported values are: title, year, awards, nominations. Default value should be title.
  * 10. limit - Integer. Maximum amount of result entries in the response.
  *
  * Please note:
