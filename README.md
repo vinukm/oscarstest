@@ -35,9 +35,22 @@ The project structure has been created using the archetypeVersion 23 proposed by
 
 ## Additional questions:
 1. The test data contains a big amount of test data. If you would have an ability to put this to the repository, how would you structure it?
+```
+Answer: Ideally with the current source the content structure:
+		/content/oscarstest/year/
+	should be sufficient. However a further classification into another level is also no harm:
+		/content/oscarstest/year/0-9 (All the films with title starting with numbers)
+		/content/oscarstest/year/a-m (All the films with title starting with a until m)
+		/content/oscarstest/year/a-m (All the films with title starting with m until z)
+```
 2. How can you improve the performance of the functionality that you're going to implement?
-
-
+```
+Answer: 	
+Option 1) I would skip the servlet approach and fallback to the sling models approach with selectors, so its easier for caching. Also, i would leverage the sling model exported in this case to output only the required attributes.
+          Caching with the current approach with servlets is also possible to an extent (/ignoreUrlParams in dispatcher configuration), however it is vulnerable to the facts that if the request contains an additional parameter then the request will not be cached and the dispatcher configurations have to be revisited.
+Option 2) When it comes to larger and complicated websites, I would always consider offloading the task to a separate search engine (elasticsearch, Apache Solr, ...) as it [1]reduces the load and stress on AEM instances [2] more performant [3] also scalable in terms of new requirements implementation
+Option 4) Though Adobe recommends node iteration, I would still compare it against an indexed lucene query approach to see the performance impact.
+```
 ## Copied over requirements from the Servlet:
 
 Based on the request parameters, a filtering and sorting should be applied. Default sort order is by title.

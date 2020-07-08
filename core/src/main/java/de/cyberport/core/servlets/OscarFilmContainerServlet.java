@@ -1,14 +1,25 @@
 package de.cyberport.core.servlets;
 
-import javax.servlet.Servlet;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import de.cyberport.core.model.FilmEntry;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.propertytypes.ServiceDescription;
+
+import javax.servlet.Servlet;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Servlet that writes information about the Oscar films in json format into the response.
@@ -112,19 +123,187 @@ public class OscarFilmContainerServlet extends SlingSafeMethodsServlet {
 
     private static final long serialVersionUID = 1L;
 
-    @Override
-    protected void doGet(final SlingHttpServletRequest req, final SlingHttpServletResponse resp) {
-        //TODO: remove this method call once your check is finished
-        printEntries(req);
-
-        //TODO implement me
+    enum SortBy {
+        TITLE,
+        YEAR,
+        AWARDS,
+        NOMINATIONS;
     }
 
-    //TODO: remove this method once your check is finished
-    private void printEntries(SlingHttpServletRequest req) {
-        final Resource resource = req.getResource();
+    @Override
+    protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response) throws IOException {
+        searchFilms(request, response);
+    }
+
+    private void searchFilms(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
+
+        List<RequestParameter> requestParameters = request.getRequestParameterList();
+        String sortByProperty = request.getRequestParameter("sortBy")!=null ? request.getRequestParameter("sortBy").getString() : null;
+        Integer limit = StringUtils.isNotBlank(request.getParameter("limit")) ? Integer.parseInt(request.getParameter("limit")) : -1;
+        final Resource resource = request.getResource();
+        List<FilmEntry> resultEntries = new ArrayList<>();
+
+        filterResults(request, requestParameters, limit, resource, resultEntries);
+        resultEntries = sortResults(sortByProperty, resultEntries);
+        prepareResponse(response, resultEntries);
+    }
+
+    /**
+     * Filter the results based on parameters
+     * @param request
+     * @param requestParameters
+     * @param limit
+     * @param resource
+     * @param resultEntries
+     */
+    private void filterResults(SlingHttpServletRequest request, List<RequestParameter> requestParameters, Integer limit, Resource resource, List<FilmEntry> resultEntries) {
         for (Resource child : resource.getChildren()) {
-            System.out.println("Entry: " + child.getValueMap());
+            FilmEntry filmEntry = child.adaptTo(FilmEntry.class);
+            ValueMap valueMap = child.getValueMap();
+
+            Boolean continueParams = false;
+            for(RequestParameter parameter : requestParameters) {
+                String param = parameter.getName();
+                switch (param) {
+                    case "title":
+                        continueParams = StringUtils.equals(valueMap.get(param).toString(), request.getParameter(param)) ? true : false;
+                        break;
+                    case "year":
+                        continueParams = filmEntry.getYear() == Integer.parseInt(request.getParameter(param)) ? true : false;
+                        break;
+                    case "minYear" :
+                        continueParams = filmEntry.getYear() >= Integer.parseInt(request.getParameter(param)) ? true : false;
+                        break;
+                    case "maxYear" :
+                        continueParams = filmEntry.getYear() <= Integer.parseInt(request.getParameter(param)) ? true : false;
+                        break;
+                    case "minAwards" :
+                        continueParams = filmEntry.getAwards() >= Integer.parseInt(request.getParameter(param)) ? true : false;
+                        break;
+                    case "maxAwards" :
+                        continueParams = filmEntry.getAwards() <= Integer.parseInt(request.getParameter(param)) ? true : false;
+                        break;
+                    case "nominations" :
+                        continueParams = filmEntry.getNominations() == Integer.parseInt(request.getParameter(param)) ? true : false;
+                        break;
+                    case "isBestPicture" :
+                        continueParams = filmEntry.getBestPicture() == Boolean.valueOf(request.getParameter(param)) ? true : false;
+                        break;
+                    default:
+                        continueParams = true; //Ignore other parameters
+                        break;
+                }
+                if(!continueParams) {
+                    break;
+                }
+            }
+
+            if (continueParams && (limit == -1 || (limit >=0 && resultEntries.size() < limit))) {
+                resultEntries.add(filmEntry);
+            } else if ((limit >= 0 && resultEntries.size() == limit)) {
+                break;
+            }
         }
     }
+
+    /**
+     * Sort the filtered results
+     * @param sortByProperty
+     * @param resultEntries
+     * @return
+     */
+    private List<FilmEntry> sortResults(String sortByProperty, List<FilmEntry> resultEntries) {
+        if (StringUtils.isNotBlank(sortByProperty)) {
+            resultEntries = sortFilmsBy(resultEntries, sortByProperty);
+        } else if(resultEntries.size() > 1){
+            resultEntries = defaultSort(resultEntries);
+        }
+        return resultEntries;
+    }
+
+    /**
+     * Sorting is supported only for title, year, awards and nominations. Any other property based sorting is ignored.
+     * @param films
+     * @param sortBy
+     * @return
+     */
+    private List<FilmEntry> sortFilmsBy(List<FilmEntry> films, String sortBy) {
+        SortBy sort = SortBy.valueOf(sortBy.toUpperCase());
+        switch (sort) {
+            case TITLE:
+                films = defaultSort(films);
+                break;
+            case YEAR:
+                films = sortByYear(films);
+                break;
+            case AWARDS:
+                films = sortByAwards(films);
+                break;
+            case NOMINATIONS:
+                films = sortByNominations(films);
+                break;
+            default:
+                films = defaultSort(films);
+                break;
+        }
+        return films;
+    }
+
+    /**
+     * Prepare the output response
+     * @param response
+     * @param resultEntries
+     * @throws IOException
+     */
+    private void prepareResponse(SlingHttpServletResponse response, List<FilmEntry> resultEntries) throws IOException {
+        Gson gson = new Gson();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("result", gson.toJsonTree(resultEntries));
+
+        //System.out.println(resultEntries.size());
+        System.out.println(jsonObject.toString());
+        response.setContentType("application/json");
+        response.getWriter().write(jsonObject.toString());
+    }
+
+    private List<FilmEntry> defaultSort(List<FilmEntry> resultEntries) {
+        resultEntries.sort(new Comparator<FilmEntry>() {
+            @Override
+            public int compare(FilmEntry f1, FilmEntry f2) {
+                return f1.getTitle().compareTo(f2.getTitle());
+            }
+        });
+        return resultEntries;
+    }
+
+    private List<FilmEntry> sortByYear(List<FilmEntry> resultEntries) {
+        resultEntries.sort(new Comparator<FilmEntry>() {
+            @Override
+            public int compare(FilmEntry f1, FilmEntry f2) {
+                return f1.getYear() - f2.getYear();
+            }
+        });
+        return resultEntries;
+    }
+
+    private List<FilmEntry> sortByAwards(List<FilmEntry> resultEntries) {
+        resultEntries.sort(new Comparator<FilmEntry>() {
+            @Override
+            public int compare(FilmEntry f1, FilmEntry f2) {
+                return f1.getAwards() - f2.getAwards();
+            }
+        });
+        return resultEntries;
+    }
+
+    private List<FilmEntry> sortByNominations(List<FilmEntry> resultEntries) {
+        resultEntries.sort(new Comparator<FilmEntry>() {
+            @Override
+            public int compare(FilmEntry f1, FilmEntry f2) {
+                return f1.getNominations() - f2.getNominations();
+            }
+        });
+        return resultEntries;
+    }
+
 }

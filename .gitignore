@@ -1,0 +1,5 @@
+core/target/
+*.iml
+.idea
+.classpath
+.metadata
