@@ -41,7 +41,7 @@ Answer: Ideally with the current source the content structure:
 	should be sufficient. However a further classification into another level is also no harm:
 		/content/oscarstest/year/0-9 (All the films with title starting with numbers)
 		/content/oscarstest/year/a-m (All the films with title starting with a until m)
-		/content/oscarstest/year/a-m (All the films with title starting with m until z)
+		/content/oscarstest/year/m-z (All the films with title starting with m until z)
 ```
 2. How can you improve the performance of the functionality that you're going to implement?
 ```
