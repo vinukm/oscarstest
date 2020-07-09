@@ -49,7 +49,7 @@ Answer:
 Option 1) I would skip the servlet approach and fallback to the sling models approach with selectors, so its easier for caching. Also, i would leverage the sling model exporter in this case to output only the required attributes and if the response is required by a third party like a mobile app.
           Caching with the current approach with servlets is also possible to an extent (/ignoreUrlParams in dispatcher configuration), however it is vulnerable to the facts that if the request contains an additional parameter then the request will not be cached and the dispatcher configurations have to be revisited.
 Option 2) When it comes to larger and complicated websites, I would always consider offloading the task to a separate search engine (elasticsearch, Apache Solr, ...) as it [1]reduces the load and stress on AEM instances [2] more performant [3] also scalable in terms of new requirements implementation
-Option 4) Though Adobe recommends node iteration, I would still compare it against an indexed lucene query approach to see the performance impact.
+Option 3) Though Adobe recommends node iteration, I would still compare it against an indexed lucene query approach to see the performance impact.
 ```
 ## Copied over requirements from the Servlet:
 
